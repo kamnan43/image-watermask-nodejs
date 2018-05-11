@@ -277,11 +277,10 @@ function saveImage(set) {
 			});
 			var form = req.form();
 			form.append('file', body, {
-				filename: index + '.jpg',
+				filename: (index+1) + '.jpg',
 				contentType: 'image/jpeg'
 			});
 			form.append('set', set);
-			form.append('index', index+1);
 		});
 
 	});
