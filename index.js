@@ -299,7 +299,7 @@ function saveConfig() {
 		if (err) {
 			return console.log(err);
 		}
-		process.exit(0);
+		config = require('./config.json');
 	});
 }
 
