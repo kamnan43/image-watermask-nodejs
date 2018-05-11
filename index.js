@@ -296,7 +296,7 @@ function saveImage(set) {
 }
 
 function saveConfig() {
-	fs.writeFile("config.json", JSON.stringify(config, null, 2), function (err) {
+	fs.writeFile("config.json", JSON.stringify(config), function (err) {
 		if (err) {
 			return console.log(err);
 		}
