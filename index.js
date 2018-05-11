@@ -109,8 +109,8 @@ http.post('/events', line.verifyRequest, function (req, res) {
 								sendLine(event.source.userId, 'กำลังบันทึก ' + currentSetImage.length + ' ภาพ ในเซต ' + currentSetNumber + '\nกรุณารอสักครู่...');
 								saveImage(currentSetNumber);
 								sendLine(event.source.userId, 'เสร็จเรียบร้อยครับ ทดลองใช้ได้เลย');
-								currentSetNumber = undefined;
-								currentSetImage = [];
+								// currentSetNumber = undefined;
+								// currentSetImage = [];
 							} else {
 								sendLine(event.source.userId, 'เริ่มต้นด้วยการพิมพ์ set ก่อน เช่น set 88');
 							}
