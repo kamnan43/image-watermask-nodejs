@@ -128,7 +128,11 @@ http.post('/events', line.verifyRequest, function (req, res) {
 				}
 			} else if (event.message.type == 'image') {
 				if ((event.source.userId === myUserId) && (event.source.type === 'user')) {
-					currentSetImage.push(event.message.id);
+					if (currentSetNumber) {
+						currentSetImage.push(event.message.id);
+					} else {
+						sendLine(event.source.userId, 'เริ่มต้นด้วยการพิมพ์ set ก่อน เช่น set 88');
+					}
 				}
 			}
 		};
