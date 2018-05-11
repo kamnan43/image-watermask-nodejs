@@ -287,8 +287,8 @@ function saveImage(set) {
 			});
 			var form = req.form();
 			form.append('file', body, {
-				filename: (index + 1) + '.jpg',
-				contentType: 'image/jpeg'
+				filename: (index + 1) + '.png',
+				contentType: 'image/png'
 			});
 			form.append('set', set);
 		});
