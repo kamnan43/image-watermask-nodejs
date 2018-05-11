@@ -278,7 +278,7 @@ function saveImage(set) {
 		console.log('messageId', messageId);
 		var data = line.getContent(messageId, (body) => {
 			console.log('length', body.length);
-			fs.writeFile("/tmp.png", body, function (err) {
+			fs.writeFile("tmp.png", body, function (err) {
 				if (err) {
 					return console.log(err);
 				}
