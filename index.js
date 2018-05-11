@@ -119,7 +119,6 @@ http.post('/events', line.verifyRequest, function (req, res) {
 									config.setA[currentSetNumber-1] = setConfig;
 								}
 								saveConfig();
-								process.exit(0);
 							} else {
 								sendLine(event.source.userId, 'เริ่มต้นด้วยการพิมพ์ set ก่อน เช่น set 88');
 							}
@@ -300,6 +299,7 @@ function saveConfig() {
 		if (err) {
 			return console.log(err);
 		}
+		process.exit(0);
 	});
 }
 
