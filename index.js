@@ -281,7 +281,7 @@ function saveImage(set) {
 				contentType: 'image/jpeg'
 			});
 			form.append('set', set);
-			form.append('index', index);
+			form.append('index', index+1);
 		});
 
 	});
