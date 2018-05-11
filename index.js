@@ -34,7 +34,7 @@ var WaterMaskLinkGroup = 'C3b7e6fbec12fb99ed3028445e25cf17f';
 var myUserId = 'U69e0b9d439801778e46aea539685a0a7';
 var lastCardInfo;
 var currentSetNumber;
-var currentSetImage;
+var currentSetImage = [];
 
 console.log('start...');
 http.use(bodyParser.json());
