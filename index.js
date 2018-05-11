@@ -268,7 +268,7 @@ function getImageUrl(set, id, index) {
 function saveImage(set) {
 	currentSetImage.forEach((messageId, index) => {
 		var data = line.getContent(messageId, (body) => {
-			var url = phpBaseURL + '/upload_file.php?set=' + set + '&index=' + index;
+			var url = phpBaseURL + '/upload_file.php';
 			var req = request.post(url, function optionalCallback(err, httpResponse, body) {
 				if (err) {
 					return console.error('upload failed:', err);
@@ -280,6 +280,8 @@ function saveImage(set) {
 				filename: index + '.jpg',
 				contentType: 'image/jpeg'
 			});
+			form.append('set', set);
+			form.append('index', index);
 		});
 
 	});
