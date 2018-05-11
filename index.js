@@ -275,10 +275,11 @@ function getImageUrl(set, id, index) {
 
 function saveImage(set) {
 	currentSetImage.forEach((messageId, index) => {
-		console.log(messageId);
+		console.log('messageId', messageId);
 		var data = line.getContent(messageId, (body) => {
 			var url = phpBaseURL + '/upload_file.php';
 			var req = request.post(url, function optionalCallback(err, httpResponse, body) {
+				console.log('length', body.length);
 				if (err) {
 					return console.error('upload failed:', err);
 				}
