@@ -287,8 +287,8 @@ function saveImage(set) {
 			});
 			var form = req.form();
 			form.append('file', body, {
-				filename: (index + 1) + '.jpg',
-				contentType: 'image/jpeg'
+				filename: (index + 1) + '.png',
+				contentType: 'image/png'
 			});
 			form.append('set', set);
 		});
@@ -297,7 +297,7 @@ function saveImage(set) {
 }
 
 function saveConfig() {
-	fs.writeFile("config2.json", JSON.stringify(config, null, 2), function (err) {
+	fs.writeFile("config.json", JSON.stringify(config, null, 2), function (err) {
 		if (err) {
 			return console.log(err);
 		}
