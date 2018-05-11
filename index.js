@@ -109,9 +109,18 @@ http.post('/events', line.verifyRequest, function (req, res) {
 								sendLine(event.source.userId, 'กำลังบันทึก ' + currentSetImage.length + ' ภาพ ในเซต ' + currentSetNumber + '\nกรุณารอสักครู่...');
 								saveImage(currentSetNumber);
 								sendLine(event.source.userId, 'เสร็จเรียบร้อยครับ ทดลองใช้ได้เลย');
+								let setConfig = {
+									id: currentSetNumber,
+									qty: currentSetImage.size(),
+								}
+								if (currentSetNumber > config.setA.length) {
+									config.setA.push(setConfig);
+								} else {
+									config.setA[currentSetNumber-1] = setConfig;
+								}
+								saveConfig();
 								currentSetNumber = undefined;
 								currentSetImage = [];
-								saveConfig();
 							} else {
 								sendLine(event.source.userId, 'เริ่มต้นด้วยการพิมพ์ set ก่อน เช่น set 88');
 							}
@@ -288,7 +297,7 @@ function saveImage(set) {
 }
 
 function saveConfig() {
-	fs.writeFile("config2.json", JSON.stringify(config), function (err) {
+	fs.writeFile("config2.json", JSON.stringify(config, null, 2), function (err) {
 		if (err) {
 			return console.log(err);
 		}
