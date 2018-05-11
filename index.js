@@ -109,8 +109,9 @@ http.post('/events', line.verifyRequest, function (req, res) {
 								sendLine(event.source.userId, 'กำลังบันทึก ' + currentSetImage.length + ' ภาพ ในเซต ' + currentSetNumber + '\nกรุณารอสักครู่...');
 								saveImage(currentSetNumber);
 								sendLine(event.source.userId, 'เสร็จเรียบร้อยครับ ทดลองใช้ได้เลย');
-								// currentSetNumber = undefined;
-								// currentSetImage = [];
+								currentSetNumber = undefined;
+								currentSetImage = [];
+								saveConfig();
 							} else {
 								sendLine(event.source.userId, 'เริ่มต้นด้วยการพิมพ์ set ก่อน เช่น set 88');
 							}
@@ -277,12 +278,20 @@ function saveImage(set) {
 			});
 			var form = req.form();
 			form.append('file', body, {
-				filename: (index+1) + '.jpg',
+				filename: (index + 1) + '.jpg',
 				contentType: 'image/jpeg'
 			});
 			form.append('set', set);
 		});
 
+	});
+}
+
+function saveConfig() {
+	fs.writeFile("config2.json", JSON.stringify(config), function (err) {
+		if (err) {
+			return console.log(err);
+		}
 	});
 }
 
