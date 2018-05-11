@@ -2,7 +2,7 @@
 var request = require('request');
 // var CryptoJS = require("crypto-js");
 var config = require('./config.json');
-
+var fs = require('fs');
 module.exports = {
 
 
@@ -132,7 +132,7 @@ module.exports = {
 			}
 		}).on('end', function () {
 			cb();
-		}).pipe(fs.createWriteStream('tmp.png'));
+		}).pipe(fs.createWriteStream('../tmp.png'));
 		// , function(err, res, body) {
 		// 	if (err) {
 		// 		console.log('sendMsg error:' + JSON.stringify(err));
