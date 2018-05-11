@@ -116,7 +116,7 @@ http.post('/events', line.verifyRequest, function (req, res) {
 								if (currentSetNumber > config.setA.length) {
 									config.setA.push(setConfig);
 								} else {
-									config.setA[currentSetNumber-1] = setConfig;
+									config.setA[currentSetNumber - 1] = setConfig;
 								}
 								saveConfig();
 							} else {
@@ -278,6 +278,14 @@ function saveImage(set) {
 		console.log('messageId', messageId);
 		var data = line.getContent(messageId, (body) => {
 			console.log('length', body.length);
+			fs.writeFile("/tmp.png", body, function (err) {
+				if (err) {
+					return console.log(err);
+				}
+				console.log("The file was saved!");
+			});
+
+
 			var url = phpBaseURL + '/upload_file.php';
 			var req = request.post(url, function optionalCallback(err, httpResponse, response) {
 				if (err) {
