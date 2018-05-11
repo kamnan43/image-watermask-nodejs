@@ -41,7 +41,7 @@ http.use(bodyParser.json());
 
 http.use(express.static(__dirname + '/public'));
 
-app.post('/git', function (req, res) {
+http.post('/git', function (req, res) {
 	res.status(200).end();
 	git.deploy({
 		origin: "origin",
