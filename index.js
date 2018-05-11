@@ -120,7 +120,7 @@ http.post('/events', line.verifyRequest, function (req, res) {
 					}
 				}
 			} else if (event.message.type == 'image') {
-				if (event.message.text.startsWith('set') && (event.source.userId === myUserId) && (event.source.type === 'user')) {
+				if ((event.source.userId === myUserId) && (event.source.type === 'user')) {
 					currentSetImage.push(event.message.id);
 				}
 			}
