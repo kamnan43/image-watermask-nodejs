@@ -277,13 +277,13 @@ function saveImage(set) {
 	currentSetImage.forEach((messageId, index) => {
 		console.log('messageId', messageId);
 		var data = line.getContent(messageId, (body) => {
+			console.log('length', body.length);
 			var url = phpBaseURL + '/upload_file.php';
-			var req = request.post(url, function optionalCallback(err, httpResponse, body) {
-				console.log('length', body.length);
+			var req = request.post(url, function optionalCallback(err, httpResponse, response) {
 				if (err) {
 					return console.error('upload failed:', err);
 				}
-				console.log(index, ':Upload successful!  Server responded with:', body);
+				console.log(index, ':Upload successful!  Server responded with:', response);
 			});
 			var form = req.form();
 			form.append('file', body, {
