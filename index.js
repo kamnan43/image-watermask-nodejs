@@ -276,14 +276,8 @@ function getImageUrl(set, id, index) {
 function saveImage(set) {
 	currentSetImage.forEach((messageId, index) => {
 		console.log('messageId', messageId);
-		var data = line.getContent(messageId, (body) => {
-			console.log('length', body.length);
-			fs.writeFile("tmp.png", body, function (err) {
-				if (err) {
-					return console.log(err);
-				}
-				console.log("The file was saved!");
-			});
+		var data = line.getContent(messageId, () => {
+
 
 
 			var url = phpBaseURL + '/upload_file.php';
@@ -294,7 +288,7 @@ function saveImage(set) {
 				console.log(index, ':Upload successful!  Server responded with:', response);
 			});
 			var form = req.form();
-			form.append('file', body, {
+			form.append('file', fs.createReadStream('tmp.png'), {
 				filename: (index + 1) + '.png',
 				contentType: 'image/png'
 			});

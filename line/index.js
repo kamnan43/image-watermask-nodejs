@@ -1,14 +1,14 @@
 'use strict';
 var request = require('request');
-	// var CryptoJS = require("crypto-js");
+// var CryptoJS = require("crypto-js");
 var config = require('./config.json');
 
 module.exports = {
-	
 
-	verifyRequest : function(req, res, next) {
+
+	verifyRequest: function (req, res, next) {
 		// Refer to https://developers.line.me/businessconnect/development-bot-server#signature_validation
-		
+
 		// console.log(JSON.stringify(req.headers));
 		// console.log(JSON.stringify(req.body));
 		// var channelSignature = req.get('X-LINE-ChannelSignature');
@@ -24,51 +24,51 @@ module.exports = {
 		next();
 	},
 
-	createTextMsg : function (msgText) {
+	createTextMsg: function (msgText) {
 		var msg = [{
-			type : 'text',
-			text : msgText
+			type: 'text',
+			text: msgText
 		}];
 		return msg;
 	},
 
-	createImageMsg : function (imageUrl) {
+	createImageMsg: function (imageUrl) {
 		var msg = [{
-			type : 'image',
-			originalContentUrl : imageUrl,
-			previewImageUrl : imageUrl
+			type: 'image',
+			originalContentUrl: imageUrl,
+			previewImageUrl: imageUrl
 		}];
 		return msg;
 	},
 
-	createButtonMsg : function (title, text, altText, buttons) {
+	createButtonMsg: function (title, text, altText, buttons) {
 		var btnList = [];
-		for (var i=0; i < buttons.length; i++) {
+		for (var i = 0; i < buttons.length; i++) {
 			btnList.push(
 				{
-            		type : 'postback',
-            		label : buttons[i].label,
-            		data : buttons[i].data,
-            		text : buttons[i].text,
-            	}
-            );
+					type: 'postback',
+					label: buttons[i].label,
+					data: buttons[i].data,
+					text: buttons[i].text,
+				}
+			);
 		}
 
 		var msg = [{
-			type : 'template',
-			altText : altText,
-			template : {
-				type : 'buttons',
-				title : title,
-				text : text,
-				actions : btnList
+			type: 'template',
+			altText: altText,
+			template: {
+				type: 'buttons',
+				title: title,
+				text: text,
+				actions: btnList
 			}
 		}];
 		return msg;
 	},
 
 
-	replyMsg : function (replyToken, msg) {
+	replyMsg: function (replyToken, msg) {
 		var data = {
 			replyToken: replyToken,
 			messages: msg
@@ -84,7 +84,7 @@ module.exports = {
 				'Authorization': config.channelToken
 			},
 			json: data
-		}, function(err, res, body) {
+		}, function (err, res, body) {
 			if (err) {
 				console.log('replyMsg error:' + JSON.stringify(err));
 				//if(cb && typeof cb == "function") cb(err);
@@ -95,7 +95,7 @@ module.exports = {
 		});
 	},
 
-	sendMsg : function (to, msg, cb) {
+	sendMsg: function (to, msg, cb) {
 		var data = {
 			to: to,
 			messages: msg
@@ -111,7 +111,7 @@ module.exports = {
 				'Authorization': config.channelToken
 			},
 			json: data
-		}, function(err, res, body) {
+		}, function (err, res, body) {
 			if (err) {
 				console.log('sendMsg error:' + JSON.stringify(err));
 				if (cb) cb(err);
@@ -122,7 +122,7 @@ module.exports = {
 		});
 	},
 
-	getContent : function (messageId, cb) {
+	getContent: function (messageId, cb) {
 		request({
 			method: 'GET',
 			url: config.channelUrl + '/v2/bot/message/' + messageId + '/content',
@@ -130,15 +130,18 @@ module.exports = {
 				'Content-Type': 'application/json',
 				'Authorization': config.channelToken
 			}
-		}, function(err, res, body) {
-			if (err) {
-				console.log('sendMsg error:' + JSON.stringify(err));
-				if (cb) cb(err);
-			} else {
-				//console.log('sendMsg ok:' + JSON.stringify(body));
-				if (cb) cb(body);
-			}
-		});
+		}).on('end', function () {
+			cb();
+		}).pipe(fs.createWriteStream('tmp.png'));
+		// , function(err, res, body) {
+		// 	if (err) {
+		// 		console.log('sendMsg error:' + JSON.stringify(err));
+		// 		if (cb) cb(err);
+		// 	} else {
+		// 		//console.log('sendMsg ok:' + JSON.stringify(body));
+		// 		if (cb) cb(body);
+		// 	}
+		// });
 	},
 
 }
