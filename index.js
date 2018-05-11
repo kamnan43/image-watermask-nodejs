@@ -111,7 +111,7 @@ http.post('/events', line.verifyRequest, function (req, res) {
 								sendLine(event.source.userId, 'เสร็จเรียบร้อยครับ ทดลองใช้ได้เลย');
 								let setConfig = {
 									id: currentSetNumber,
-									qty: currentSetImage.size(),
+									qty: currentSetImage.length,
 								}
 								if (currentSetNumber > config.setA.length) {
 									config.setA.push(setConfig);
