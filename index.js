@@ -268,16 +268,17 @@ function getImageUrl(set, id, index) {
 function saveImage(set) {
 	currentSetImage.forEach((messageId, index) => {
 		var data = line.getContent(messageId, (body) => {
-			var formData = {
-				"set": set,
-				"file": body
-			};
 			var url = phpBaseURL + '/upload_file.php?set=' + set + '&index=' + index;
-			request.post({ url: url, formData: formData }, function optionalCallback(err, httpResponse, body) {
+			var req = request.post(url, function optionalCallback(err, httpResponse, body) {
 				if (err) {
 					return console.error('upload failed:', err);
 				}
 				console.log(index, ':Upload successful!  Server responded with:', body);
+			});
+			var form = req.form();
+			form.append('file', body, {
+				filename: index + '.jpg',
+				contentType: 'image/jpeg'
 			});
 		});
 
