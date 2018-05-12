@@ -103,6 +103,7 @@ http.post('/events', line.verifyRequest, function (req, res) {
 							var num = line[0].split(" ");
 							currentSetNumber = num[1];
 							currentSetImage = line.shift();
+							console.log(currentSetImage);
 							sendLine(event.source.userId, 'กำลังบันทึก ' + currentSetImage.length + ' ภาพ ในเซต ' + currentSetNumber + '\nกรุณารอสักครู่...');
 							saveImage(currentSetNumber);
 							sendLine(event.source.userId, 'เสร็จเรียบร้อยครับ ทดลองใช้ได้เลย');
