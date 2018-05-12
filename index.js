@@ -295,7 +295,7 @@ function uploadImage(set) {
 		if (err) {
 			return console.error('upload failed:', err);
 		}
-		console.log(index, ':Upload successful!  Server responded with:', response);
+		console.log(':Upload successful!  Server responded with:', response);
 	});
 }
 
