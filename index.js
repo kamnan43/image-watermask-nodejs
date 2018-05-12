@@ -268,20 +268,21 @@ function saveImage(set) {
 	currentSetImage.forEach((url, index) => {
 		extractUrl(url, (newUrl) => {
 			console.log('extractUrl', newUrl);
-			var formData = {
-				set: set,
-				file: {
-					value: fs.createReadStream(set + '_' + (index + 1) + '.png'),
-					options: {
-						filename: (index + 1) + '.png',
-						contentType: 'image/png'
-					}
-				}
-			};
+
 			request({
 				method: 'GET',
 				url: newUrl
 			}).on('end', function () {
+				var formData = {
+					set: set,
+					file: {
+						value: fs.createReadStream(set + '_' + (index + 1) + '.png'),
+						options: {
+							filename: (index + 1) + '.png',
+							contentType: 'image/png'
+						}
+					}
+				};
 				var uploadUrl = phpBaseURL + '/upload_file.php';
 				var req = request.post({ url: uploadUrl, formData: formData }, function optionalCallback(err, httpResponse, response) {
 					if (err) {
