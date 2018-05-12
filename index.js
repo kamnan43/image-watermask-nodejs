@@ -106,7 +106,9 @@ http.post('/events', line.verifyRequest, function (req, res) {
 							currentSetImage = line;
 							sendLine(event.source.userId, 'กำลังบันทึก ' + currentSetImage.length + ' ภาพ ในเซต ' + currentSetNumber + '\nกรุณารอสักครู่...');
 							saveImage(currentSetNumber);
-							sendLine(event.source.userId, 'เสร็จเรียบร้อยครับ ทดลองใช้ได้เลย');
+							var key = saveTx(event.message.id, event.source.userId + '', 'A', currentSetNumber, 'admin', 0);
+							var url = baseURL + '/view?key=' + key;
+							sendLine(event.source.userId, 'ภาพเซต ' + currentSetNumber + ' ดาวน์โหลดได้ที่ ' + url);
 							let setConfig = {
 								id: currentSetNumber,
 								qty: currentSetImage.length,
@@ -279,11 +281,11 @@ function saveImage(set) {
 					console.log(index, ':Upload successful!  Server responded with:', response);
 				});
 				var form = req.form();
+				form.append('set', set);
 				form.append('file', fs.createReadStream(set + '_' + (index + 1) + '.png'), {
 					filename: (index + 1) + '.png',
 					contentType: 'image/png'
 				});
-				form.append('set', set);
 			}).pipe(fs.createWriteStream(set + '_' + (index + 1) + '.png'));
 
 		});
