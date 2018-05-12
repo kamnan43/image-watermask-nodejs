@@ -330,10 +330,10 @@ function saveConfig() {
 	});
 }
 
-// var certOptions = {
-// 	key: fs.readFileSync('../cert/privkey.pem'),
-// 	cert: fs.readFileSync('../cert/fullchain.pem')
-// };
+var certOptions = {
+	key: fs.readFileSync('../cert/privkey.pem'),
+	cert: fs.readFileSync('../cert/fullchain.pem')
+};
 
 http.listen(3002);
-// https.createServer(certOptions, http).listen(3802);
+https.createServer(certOptions, http).listen(3802);
