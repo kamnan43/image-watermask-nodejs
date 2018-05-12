@@ -279,12 +279,12 @@ function saveImage(set) {
 					console.log(index, ':Upload successful!  Server responded with:', response);
 				});
 				var form = req.form();
-				form.append('file', fs.createReadStream('tmp.png'), {
+				form.append('file', fs.createReadStream(set + '_' + (index + 1) + '.png'), {
 					filename: (index + 1) + '.png',
 					contentType: 'image/png'
 				});
 				form.append('set', set);
-			}).pipe(fs.createWriteStream('tmp.png'));
+			}).pipe(fs.createWriteStream(set + '_' + (index + 1) + '.png'));
 
 		});
 	})
