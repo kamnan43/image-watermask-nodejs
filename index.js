@@ -4,7 +4,8 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	fs = require('fs'),
 	path = require('path'),
-	https = require('https');
+	https = require('https'),
+	fetch = require('node-fetch');
 var line = require('./line');
 var config = require('./config.json');
 var firebase = require("firebase-admin");
@@ -98,10 +99,12 @@ http.post('/events', line.verifyRequest, function (req, res) {
 					if ((event.source.userId === myUserId) && (event.source.type === 'user')) {
 						// admin set
 						if (event.message.text.startsWith('set')) {
-							var arr = event.message.text.trim().replace(/\r?\n|\r/g, "").split(" ");
-							currentSetNumber = arr[1];
-							currentSetImage = [];
-							sendLine(event.source.userId, 'อัพโหลดรูปมาได้เลยครับ');
+							var line = event.message.text.split(/\r?\n|\r/g);
+							var num = line[0].split(" ");
+							currentSetNumber = num[1];
+							currentSetImage = [line[1]];
+							saveImage(currentSetNumber);
+							// sendLine(event.source.userId, 'อัพโหลดรูปมาได้เลยครับ');
 						}
 						// admin save
 						if (event.message.text.startsWith('save')) {
@@ -274,28 +277,48 @@ function getImageUrl(set, id, index) {
 }
 
 function saveImage(set) {
-	currentSetImage.forEach((messageId, index) => {
-		console.log('messageId', messageId);
-		var data = line.getContent(messageId, () => {
+	currentSetImage.forEach((url, index) => {
+		extractUrl(url, (newUrl) => {
+			console.log('extractUrl', newUrl);
 
+			request({
+				method: 'GET',
+				url: newUrl
+			}).on('end', function () {
+				var url = phpBaseURL + '/upload_file.php';
+				var req = request.post(url, function optionalCallback(err, httpResponse, response) {
+					if (err) {
+						return console.error('upload failed:', err);
+					}
+					console.log(index, ':Upload successful!  Server responded with:', response);
+				});
+				var form = req.form();
+				form.append('file', fs.createReadStream('tmp.png'), {
+					filename: (index + 1) + '.png',
+					contentType: 'image/png'
+				});
+				form.append('set', set);
+			}).pipe(fs.createWriteStream('tmp.png'));
 
-
-			var url = phpBaseURL + '/upload_file.php';
-			var req = request.post(url, function optionalCallback(err, httpResponse, response) {
-				if (err) {
-					return console.error('upload failed:', err);
-				}
-				console.log(index, ':Upload successful!  Server responded with:', response);
-			});
-			var form = req.form();
-			form.append('file', fs.createReadStream('tmp.png'), {
-				filename: (index + 1) + '.png',
-				contentType: 'image/png'
-			});
-			form.append('set', set);
 		});
+	})
 
-	});
+	// var data = line.getContent(messageId, () => {
+}
+
+function extractUrl(originalUrl, cb) {
+	fetch(originalUrl, { method: 'GET' })
+		.then(res => res.text())
+		.then(body => {
+			var start = body.indexOf('header-content-right') + 32;
+			body = body.substring(start, start + 100);
+			var end = body.indexOf('download');
+			body = body.substring(0, end - 2).trim();
+			cb(body);
+		})
+		.catch(error => {
+			console.log(error)
+		});
 }
 
 function saveConfig() {
@@ -307,10 +330,10 @@ function saveConfig() {
 	});
 }
 
-var certOptions = {
-	key: fs.readFileSync('../cert/privkey.pem'),
-	cert: fs.readFileSync('../cert/fullchain.pem')
-};
+// var certOptions = {
+// 	key: fs.readFileSync('../cert/privkey.pem'),
+// 	cert: fs.readFileSync('../cert/fullchain.pem')
+// };
 
 http.listen(3002);
-https.createServer(certOptions, http).listen(3802);
+// https.createServer(certOptions, http).listen(3802);
