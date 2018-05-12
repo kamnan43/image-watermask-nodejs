@@ -118,7 +118,7 @@ http.post('/events', line.verifyRequest, function (req, res) {
 							} else {
 								config.setA[currentSetNumber - 1] = setConfig;
 							}
-							// saveConfig();
+							saveConfig();
 						}
 					}
 					if (event.message.text.startsWith('$') && ((event.source.groupId === WaterMaskLinkGroup) || (event.source.userId === myUserId))) {
