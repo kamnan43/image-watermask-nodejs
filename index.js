@@ -109,7 +109,7 @@ http.post('/events', line.verifyRequest, function (req, res) {
 							var url = baseURL + '/view?key=' + key;
 							sendLine(event.source.userId, 'ภาพเซต ' + currentSetNumber + ' ดาวน์โหลดได้ที่ ' + url);
 							let setConfig = {
-								id: currentSetNumber,
+								id: +currentSetNumber,
 								qty: currentSetImage.length,
 							}
 							if (currentSetNumber > config.setA.length) {
@@ -277,8 +277,6 @@ function saveImage(set) {
 
 		});
 	})
-
-	// var data = line.getContent(messageId, () => {
 }
 
 function uploadFile(set, index) {
@@ -318,7 +316,7 @@ function extractUrl(originalUrl, cb) {
 }
 
 function saveConfig() {
-	fs.writeFile("config.json", JSON.stringify(config), function (err) {
+	fs.writeFile("config.json", JSON.stringify(config, null ,2), function (err) {
 		if (err) {
 			return console.log(err);
 		}
