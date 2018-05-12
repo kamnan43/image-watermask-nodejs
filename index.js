@@ -290,6 +290,7 @@ function uploadImage(set) {
 		set: set,
 		attachments: attachments,
 	};
+	console.log('attachments', attachments.length);
 	var uploadUrl = phpBaseURL + '/upload_file.php';
 	var req = request.post({ url: uploadUrl, formData: formData }, function optionalCallback(err, httpResponse, response) {
 		if (err) {
