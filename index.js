@@ -104,7 +104,6 @@ http.post('/events', line.verifyRequest, function (req, res) {
 							line.shift();
 							currentSetNumber = num[1];
 							currentSetImage = line;
-							sendLine(event.source.userId, 'กำลังบันทึก ' + currentSetImage.length + ' ภาพ ในเซต ' + currentSetNumber + '\nกรุณารอสักครู่...');
 							saveImage(currentSetNumber);
 							var key = saveTx(event.message.id, event.source.userId + '', 'A', currentSetNumber, 'admin', 0);
 							var url = baseURL + '/view?key=' + key;
@@ -267,7 +266,7 @@ function getImageUrl(set, id, index) {
 function saveImage(set) {
 	currentSetImage.forEach((url, index) => {
 		extractUrl(url, (newUrl) => {
-			console.log('extractUrl', newUrl);
+			console.log('extractUrl', index, newUrl);
 
 			request({
 				method: 'GET',
