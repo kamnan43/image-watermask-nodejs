@@ -102,35 +102,20 @@ http.post('/events', line.verifyRequest, function (req, res) {
 							var line = event.message.text.split(/\r?\n|\r/g);
 							var num = line[0].split(" ");
 							currentSetNumber = num[1];
-							currentSetImage = [line[1]];
+							currentSetImage = line.shift();
+							sendLine(event.source.userId, 'กำลังบันทึก ' + currentSetImage.length + ' ภาพ ในเซต ' + currentSetNumber + '\nกรุณารอสักครู่...');
 							saveImage(currentSetNumber);
-							// sendLine(event.source.userId, 'อัพโหลดรูปมาได้เลยครับ');
-						}
-						// admin save
-						if (event.message.text.startsWith('save')) {
-							if (currentSetNumber) {
-								sendLine(event.source.userId, 'กำลังบันทึก ' + currentSetImage.length + ' ภาพ ในเซต ' + currentSetNumber + '\nกรุณารอสักครู่...');
-								saveImage(currentSetNumber);
-								sendLine(event.source.userId, 'เสร็จเรียบร้อยครับ ทดลองใช้ได้เลย');
-								let setConfig = {
-									id: currentSetNumber,
-									qty: currentSetImage.length,
-								}
-								if (currentSetNumber > config.setA.length) {
-									config.setA.push(setConfig);
-								} else {
-									config.setA[currentSetNumber - 1] = setConfig;
-								}
-								saveConfig();
-							} else {
-								sendLine(event.source.userId, 'เริ่มต้นด้วยการพิมพ์ set ก่อน เช่น set 88');
+							sendLine(event.source.userId, 'เสร็จเรียบร้อยครับ ทดลองใช้ได้เลย');
+							let setConfig = {
+								id: currentSetNumber,
+								qty: currentSetImage.length,
 							}
-						}
-						// admin upload
-						if (event.message.text.startsWith('edit')) {
-							var arr = event.message.text.trim().replace(/\r?\n|\r/g, "").split(" ");
-							currentSet = arr[1];
-							sendLine(event.source.userId, 'อัพโหลดรูปมาได้เลยครับ');
+							if (currentSetNumber > config.setA.length) {
+								config.setA.push(setConfig);
+							} else {
+								config.setA[currentSetNumber - 1] = setConfig;
+							}
+							// saveConfig();
 						}
 					}
 					if (event.message.text.startsWith('$') && ((event.source.groupId === WaterMaskLinkGroup) || (event.source.userId === myUserId))) {
@@ -285,8 +270,8 @@ function saveImage(set) {
 				method: 'GET',
 				url: newUrl
 			}).on('end', function () {
-				var url = phpBaseURL + '/upload_file.php';
-				var req = request.post(url, function optionalCallback(err, httpResponse, response) {
+				var uploadUrl = phpBaseURL + '/upload_file.php';
+				var req = request.post(uploadUrl, function optionalCallback(err, httpResponse, response) {
 					if (err) {
 						return console.error('upload failed:', err);
 					}
