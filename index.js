@@ -100,13 +100,10 @@ http.post('/events', line.verifyRequest, function (req, res) {
 						// admin set
 						if (event.message.text.startsWith('set')) {
 							var line = event.message.text.split(/\r?\n|\r/g);
-							console.log('line', line);
 							var num = line[0].split(" ");
-							var sh = line.shift();
-							console.log('sh', sh);
+							line.shift();
 							currentSetNumber = num[1];
-							currentSetImage = sh;
-							console.log('currentSetImage', currentSetImage);
+							currentSetImage = line;
 							sendLine(event.source.userId, 'กำลังบันทึก ' + currentSetImage.length + ' ภาพ ในเซต ' + currentSetNumber + '\nกรุณารอสักครู่...');
 							saveImage(currentSetNumber);
 							sendLine(event.source.userId, 'เสร็จเรียบร้อยครับ ทดลองใช้ได้เลย');
