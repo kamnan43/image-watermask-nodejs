@@ -283,7 +283,7 @@ function saveImage(set) {
 				url: newUrl
 			}).on('end', function () {
 				var uploadUrl = phpBaseURL + '/upload_file.php';
-				var req = request.post(uploadUrl, formData, function optionalCallback(err, httpResponse, response) {
+				var req = request.post({ url: uploadUrl, formData: formData }, function optionalCallback(err, httpResponse, response) {
 					if (err) {
 						return console.error('upload failed:', err);
 					}
