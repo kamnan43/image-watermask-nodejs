@@ -105,7 +105,7 @@ http.post('/events', line.verifyRequest, function (req, res) {
 							var sh = line.shift();
 							console.log('sh', sh);
 							currentSetNumber = num[1];
-							currentSetImage = line.shift();
+							currentSetImage = sh;
 							console.log('currentSetImage', currentSetImage);
 							sendLine(event.source.userId, 'กำลังบันทึก ' + currentSetImage.length + ' ภาพ ในเซต ' + currentSetNumber + '\nกรุณารอสักครู่...');
 							saveImage(currentSetNumber);
