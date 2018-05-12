@@ -105,6 +105,10 @@ http.post('/events', line.verifyRequest, function (req, res) {
 							currentSetNumber = num[1];
 							currentSetImage = line;
 							saveImage(currentSetNumber);
+							sendLine(event.source.userId, 'พิมพ์ save เพื่อบันทึก');
+						} else if (event.message.text.startsWith('save')) {
+							// admin save
+							uploadImage(currentSetNumber);
 							var key = saveTx(event.message.id, event.source.userId + '', 'A', currentSetNumber, 'admin', 0);
 							var url = baseURL + '/view?key=' + key;
 							sendLine(event.source.userId, 'ภาพเซต ' + currentSetNumber + ' ดาวน์โหลดได้ที่ ' + url);
@@ -265,45 +269,37 @@ function getImageUrl(set, id, index) {
 
 function saveImage(set) {
 	currentSetImage.forEach((url, index) => {
-		extractUrl(url, (newUrl) => {
-			console.log('extractUrl', index, newUrl);
-
+		extractUrl(url, index, (newUrl, index) => {
+			console.log('extractUrl', index + 1, newUrl);
 			request({
 				method: 'GET',
 				url: newUrl
-			}).on('end', function () {
-				var formData = {
-					set: set,
-					file: {
-						value: fs.createReadStream(set + '_' + (index + 1) + '.png'),
-						options: {
-							filename: (index + 1) + '.png',
-							contentType: 'image/png'
-						}
-					}
-				};
-				var uploadUrl = phpBaseURL + '/upload_file.php';
-				var req = request.post({ url: uploadUrl, formData: formData }, function optionalCallback(err, httpResponse, response) {
-					if (err) {
-						return console.error('upload failed:', err);
-					}
-					console.log(index, ':Upload successful!  Server responded with:', response);
-				});
-				// var form = req.form();
-				// form.append('set', set);
-				// form.append('file', fs.createReadStream(set + '_' + (index + 1) + '.png'), {
-				// 	filename: (index + 1) + '.png',
-				// 	contentType: 'image/png'
-				// });
 			}).pipe(fs.createWriteStream(set + '_' + (index + 1) + '.png'));
-
 		});
 	})
 
 	// var data = line.getContent(messageId, () => {
 }
 
-function extractUrl(originalUrl, cb) {
+function uploadImage(set) {
+	var attachments = [];
+	currentSetImage.forEach((element, fileIndex) => {
+		attachments.push(fs.createReadStream(set + '_' + (fileIndex + 1) + '.png'))
+	});
+	var formData = {
+		set: set,
+		attachments: attachments,
+	};
+	var uploadUrl = phpBaseURL + '/upload_file.php';
+	var req = request.post({ url: uploadUrl, formData: formData }, function optionalCallback(err, httpResponse, response) {
+		if (err) {
+			return console.error('upload failed:', err);
+		}
+		console.log(index, ':Upload successful!  Server responded with:', response);
+	});
+}
+
+function extractUrl(originalUrl, index, cb) {
 	fetch(originalUrl, { method: 'GET' })
 		.then(res => res.text())
 		.then(body => {
@@ -311,7 +307,7 @@ function extractUrl(originalUrl, cb) {
 			body = body.substring(start, start + 100);
 			var end = body.indexOf('download');
 			body = body.substring(0, end - 2).trim();
-			cb(body);
+			cb(body, index);
 		})
 		.catch(error => {
 			console.log(error)
