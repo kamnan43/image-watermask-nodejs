@@ -105,10 +105,6 @@ http.post('/events', line.verifyRequest, function (req, res) {
 							currentSetNumber = num[1];
 							currentSetImage = line;
 							saveImage(currentSetNumber);
-							sendLine(event.source.userId, 'พิมพ์ save เพื่อบันทึก');
-						} else if (event.message.text.startsWith('save')) {
-							// admin save
-							uploadImage(currentSetNumber);
 							var key = saveTx(event.message.id, event.source.userId + '', 'A', currentSetNumber, 'admin', 0);
 							var url = baseURL + '/view?key=' + key;
 							sendLine(event.source.userId, 'ภาพเซต ' + currentSetNumber + ' ดาวน์โหลดได้ที่ ' + url);
@@ -269,38 +265,44 @@ function getImageUrl(set, id, index) {
 
 function saveImage(set) {
 	currentSetImage.forEach((url, index) => {
-		extractUrl(url, index, (newUrl, index) => {
-			console.log('extractUrl', index + 1, newUrl);
+		extractUrl(url, (newUrl) => {
+			console.log('extractUrl', (index + 1), newUrl);
+
 			request({
 				method: 'GET',
 				url: newUrl
+			}).on('end', function () {
+				setTimeout(function () { uploadFile(set, index) }, 500);
 			}).pipe(fs.createWriteStream(set + '_' + (index + 1) + '.png'));
+
 		});
 	})
 
 	// var data = line.getContent(messageId, () => {
 }
 
-function uploadImage(set) {
-	var attachments = [];
-	currentSetImage.forEach((element, fileIndex) => {
-		attachments.push(fs.createReadStream(set + '_' + (fileIndex + 1) + '.png'))
-	});
+function uploadFile(set, index) {
+	console.log('uploadFile', set, (index + 1));
 	var formData = {
 		set: set,
-		attachments: attachments,
+		file: {
+			value: fs.createReadStream(set + '_' + (index + 1) + '.png'),
+			options: {
+				filename: (index + 1) + '.png',
+				contentType: 'image/png'
+			}
+		}
 	};
-	console.log('attachments', attachments.length);
 	var uploadUrl = phpBaseURL + '/upload_file.php';
 	var req = request.post({ url: uploadUrl, formData: formData }, function optionalCallback(err, httpResponse, response) {
 		if (err) {
 			return console.error('upload failed:', err);
 		}
-		console.log(':Upload successful!  Server responded with:', response);
+		console.log(index, ':Upload successful!  Server responded with:', response);
 	});
 }
 
-function extractUrl(originalUrl, index, cb) {
+function extractUrl(originalUrl, cb) {
 	fetch(originalUrl, { method: 'GET' })
 		.then(res => res.text())
 		.then(body => {
@@ -308,7 +310,7 @@ function extractUrl(originalUrl, index, cb) {
 			body = body.substring(start, start + 100);
 			var end = body.indexOf('download');
 			body = body.substring(0, end - 2).trim();
-			cb(body, index);
+			cb(body);
 		})
 		.catch(error => {
 			console.log(error)
