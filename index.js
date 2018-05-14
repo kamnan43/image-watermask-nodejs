@@ -5,6 +5,7 @@ var express = require('express'),
 	fs = require('fs'),
 	path = require('path'),
 	https = require('https'),
+	http = require('http'),
 	fetch = require('node-fetch');
 var line = require('./line');
 var config = require('./config.json');
@@ -26,7 +27,7 @@ var database = firebase.database();
 var txRef = database.ref("/tx");
 var cardRef = database.ref("/card");
 
-var http = express();
+var app = express();
 var port = process.env.PORT;
 var baseURL = 'https://sitthi.me:3802';
 var phpBaseURL = 'https://sitthi.me/php';
@@ -38,11 +39,11 @@ var currentSetNumber;
 var currentSetImage = [];
 
 console.log('start...');
-http.use(bodyParser.json());
+app.use(bodyParser.json());
 
-http.use(express.static(__dirname + '/public'));
-http.use(express.static(__dirname + '/downloaded'));
-http.post('/git', function (req, res) {
+app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/downloaded'));
+app.post('/git', function (req, res) {
 	res.status(200).end();
 	git.deploy({
 		origin: "origin",
@@ -50,7 +51,7 @@ http.post('/git', function (req, res) {
 	});
 });
 
-http.get('/view', function (req, res) {
+app.get('/view', function (req, res) {
 	getTx(req.query.key, function (obj) {
 		var header = '<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><body>\n';
 		var footer = '</body></html>';
@@ -72,7 +73,7 @@ http.get('/view', function (req, res) {
 	})
 });
 
-http.get('/gen', function (req, res) {
+app.get('/gen', function (req, res) {
 	getTx(req.query.key, function (obj) {
 		if (obj) {
 			request.get(getImageUrl(obj.set, obj.lineId, req.query.index)).pipe(res);
@@ -82,11 +83,11 @@ http.get('/gen', function (req, res) {
 	})
 });
 
-http.get('/healthcheck', function (req, res) {
+app.get('/healthcheck', function (req, res) {
 	res.status(200).end('OK');
 });
 
-http.post('/events', line.verifyRequest, function (req, res) {
+app.post('/events', line.verifyRequest, function (req, res) {
 	console.log('events:' + JSON.stringify(req.body));
 	res.status(200).end();
 
@@ -331,10 +332,21 @@ function saveConfig() {
 	});
 }
 
+function downloadProfilePicture(pictureUrl, downloadPath) {
+  return new Promise((resolve, reject) => {
+    http.get(pictureUrl, function (response) {
+      const writable = fs.createWriteStream(downloadPath);
+      response.pipe(writable);
+      response.on('end', () => resolve(downloadPath));
+      response.on('error', reject);
+    });
+  });
+}
+
 var certOptions = {
 	key: fs.readFileSync('../cert/privkey.pem'),
 	cert: fs.readFileSync('../cert/fullchain.pem')
 };
 
-http.listen(3002);
-https.createServer(certOptions, http).listen(3802);
+app.listen(3002);
+app.createServer(certOptions, app).listen(3802);
