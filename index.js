@@ -143,7 +143,7 @@ function processTextMessage(service, event, commandStr) {
 		case 'watermask':
 			const downloadPath = path.join(__dirname, 'downloaded', `${event.source.userId}.jpg`);
 			const previewPath = path.join(__dirname, 'downloaded', `${event.source.userId}-preview.jpg`);
-			line.getProfile(source.userId, (profile) => {
+			line.getProfile(event.source.userId, (profile) => {
 				console.log('profile', profile);
 				downloadProfilePicture(profile.pictureUrl, downloadPath);
 			});
