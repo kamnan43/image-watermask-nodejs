@@ -41,7 +41,7 @@ console.log('start...');
 http.use(bodyParser.json());
 
 http.use(express.static(__dirname + '/public'));
-
+http.use(express.static(__dirname + '/downloaded'));
 http.post('/git', function (req, res) {
 	res.status(200).end();
 	git.deploy({
@@ -141,6 +141,13 @@ function processTextMessage(service, event, commandStr) {
 
 	switch (service) {
 		case 'watermask':
+			const downloadPath = path.join(__dirname, 'downloaded', `${event.source.userId}.jpg`);
+			const previewPath = path.join(__dirname, 'downloaded', `${event.source.userId}-preview.jpg`);
+			line.getProfile(source.userId, (profile) => {
+				console.log('profile', profile);
+				downloadProfilePicture(profile.pictureUrl, downloadPath);
+			});
+
 			var arr = commandStr.trim().replace(/\r?\n|\r/g, "").split(" ");
 			var setStr = arr[0].trim();
 			var setArr = setStr.split(".");
@@ -316,7 +323,7 @@ function extractUrl(originalUrl, cb) {
 }
 
 function saveConfig() {
-	fs.writeFile("config.json", JSON.stringify(config, null ,2), function (err) {
+	fs.writeFile("config.json", JSON.stringify(config, null, 2), function (err) {
 		if (err) {
 			return console.log(err);
 		}

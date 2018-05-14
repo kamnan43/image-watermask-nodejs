@@ -67,7 +67,6 @@ module.exports = {
 		return msg;
 	},
 
-
 	replyMsg: function (replyToken, msg) {
 		var data = {
 			replyToken: replyToken,
@@ -118,6 +117,25 @@ module.exports = {
 			} else {
 				//console.log('sendMsg ok:' + JSON.stringify(body));
 				if (cb) cb();
+			}
+		});
+	},
+
+	getProfile: function (userId, cb) {
+		request({
+			method: 'GET',
+			url: config.channelUrl + '/v2/bot/profile/' + userId,
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': config.channelToken
+			}
+		}, function (err, res, body) {
+			if (err) {
+				console.log('getProfile error:' + JSON.stringify(err));
+				if (cb) cb(err);
+			} else {
+				console.log('getProfile ok:' + JSON.stringify(body));
+				if (cb) cb(body);
 			}
 		});
 	},
