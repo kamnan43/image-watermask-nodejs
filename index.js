@@ -312,7 +312,9 @@ function extractUrl(originalUrl, cb) {
 	fetch(originalUrl, { method: 'GET' })
 		.then(res => res.text())
 		.then(body => {
-			var start = body.indexOf('header-content-right') + 32;
+			var start = body.indexOf('header-content-right');
+			body = body.substring(start, start + 100);
+			start = body.indexOf('href') + 6;
 			body = body.substring(start, start + 100);
 			var end = body.indexOf('download');
 			body = body.substring(0, end - 2).trim();
