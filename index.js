@@ -278,7 +278,7 @@ function saveImage(set) {
 
 			request({
 				method: 'GET',
-				url: newUrl
+				uri: newUrl
 			}).on('end', function () {
 				setTimeout(function () { uploadFile(set, index) }, 500);
 			}).pipe(fs.createWriteStream(set + '_' + (index + 1) + '.png'));
